@@ -19,6 +19,7 @@
 #include "AP_Proximity_RangeFinder.h"
 #include "AP_Proximity_MAV.h"
 #include "AP_Proximity_SITL.h"
+#include "AP_Proximity_Analog.h"
 
 extern const AP_HAL::HAL &hal;
 
@@ -143,6 +144,105 @@ const AP_Param::GroupInfo AP_Proximity::var_info[] = {
     // @Range: 0 45
     // @User: Standard
     AP_GROUPINFO("_IGN_WID6", 15, AP_Proximity, _ignore_width_deg[5], 0),
+
+#if PROXIMITY_MAX_ANALOG > 0
+    // @Param: _ANLG_FUNC
+    // @DisplayName: Analog sensor function
+    // @Description: Function that is used to convert voltage to distance for analog sensors
+    // @Values: 0:Linear,1:Inverted,2:Hyperbolic,3:Power
+    // @User: Standard
+    AP_GROUPINFO("_ANLG_FUNC", 19, AP_Proximity, state[0].function, 0),
+
+    // @Param: _ANLG_SCALING
+    // @DisplayName: Analog sensor scaling
+    // @Description: Scaling for analog sensors
+    // @User: Standard
+    AP_GROUPINFO("_ANLG_SCALING", 20, AP_Proximity, state[0].scaling, 3.0f),
+
+    // @Param: _ANLG_OFFSET
+    // @DisplayName: Analog sensor offset
+    // @Description: Offset for analog sensors
+    // @User: Standard
+    AP_GROUPINFO("_ANLG_OFFSET",  21, AP_Proximity, state[0].offset, 0.0f),
+
+    // @Param: _ANLG_MIN_M
+    // @DisplayName: Analog sensor minimum distance
+    // @Description: Minimum distance in meters for analog sensors
+    // @Units: m
+    // @User: Standard
+    AP_GROUPINFO("_ANLG_MIN_M", 22, AP_Proximity, state[0].distance_min, 0.2f),
+
+    // @Param: _ANLG_MAX_M
+    // @DisplayName: Analog sensor maximum distance
+    // @Description: Maximum distance in meters for analog sensors
+    // @Units: m
+    // @User: Standard
+    AP_GROUPINFO("_ANLG_MAX_M", 23, AP_Proximity, state[0].distance_max, 7.0f),
+
+    // @Param: _ANLG_CUTOFF
+    // @DisplayName: Analog sensor cutoff frequency
+    // @Description: Cutoff frequency in hertz for filtering distance readings
+    // @Units: Hz
+    // @User: Standard
+    AP_GROUPINFO("_ANLG_CUTOFF", 24, AP_Proximity, state[0].cutoff_frequency, 0.0f),
+
+    // @Param: _ANLG1_PIN
+    // @DisplayName: Analog sensor 1 pin
+    // @Description: Pin number for first analog sensor. Set to -1 to disable
+    // @User: Standard
+    AP_GROUPINFO("_ANLG1_PIN", 25, AP_Proximity, state[0].pin[0], -1),
+
+    // @Param: _ANLG1_ORIENT
+    // @DisplayName: Analog sensor 1 orientation
+    // @Description: Orientation of first analog sensor
+    // @Values: 0:Forward, 1:Forward-Right, 2:Right, 3:Back-Right, 4:Back, 5:Back-Left, 6:Left, 7:Forward-Left, 24:Up
+    AP_GROUPINFO("_ANLG1_ORIENT", 26, AP_Proximity, state[0].orientation[0], 0),
+#endif
+
+#if PROXIMITY_MAX_ANALOG > 1
+    // @Param: _ANLG2_PIN
+    // @DisplayName: Analog sensor 2 pin
+    // @Description: Pin number for second analog sensor. Set to -1 to disable
+    // @User: Standard
+    AP_GROUPINFO("_ANLG2_PIN", 27, AP_Proximity, state[0].pin[1], -1),
+
+    // @Param: _ANLG2_ORIENT
+    // @DisplayName: Analog sensor 2 orientation
+    // @Description: Orientation of second analog sensor
+    // @Values: 0:Forward, 1:Forward-Right, 2:Right, 3:Back-Right, 4:Back, 5:Back-Left, 6:Left, 7:Forward-Left, 24:Up
+    // @User: Standard
+    AP_GROUPINFO("_ANLG2_ORIENT", 28, AP_Proximity, state[0].orientation[1], 2),
+#endif
+
+#if PROXIMITY_MAX_ANALOG > 2
+    // @Param: _ANLG3_PIN
+    // @DisplayName: Analog sensor 3 pin
+    // @Description: Pin number for third analog sensor. Set to -1 to disable
+    // @User: Standard
+    AP_GROUPINFO("_ANLG3_PIN", 29, AP_Proximity, state[0].pin[2], -1),
+
+    // @Param: _ANLG3_ORIENT
+    // @DisplayName: Analog sensor 3 orientation
+    // @Description: Orientation of third analog sensor
+    // @Values: 0:Forward, 1:Forward-Right, 2:Right, 3:Back-Right, 4:Back, 5:Back-Left, 6:Left, 7:Forward-Left, 24:Up
+    // @User: Standard
+    AP_GROUPINFO("_ANLG3_ORIENT", 30, AP_Proximity, state[0].orientation[2], 4),
+#endif
+
+#if PROXIMITY_MAX_ANALOG > 3
+    // @Param: _ANLG4_PIN
+    // @DisplayName: Analog sensor 4 pin
+    // @Description: Pin number for fourth analog sensor. Set to -1 to disable
+    // @User: Standard
+    AP_GROUPINFO("_ANLG4_PIN", 31, AP_Proximity, state[0].pin[3], -1),
+
+    // @Param: _ANLG4_ORIENT
+    // @DisplayName: Analog sensor 4 orientation
+    // @Description: Orientation of fourth analog sensor
+    // @Values: 0:Forward, 1:Forward-Right, 2:Right, 3:Back-Right, 4:Back, 5:Back-Left, 6:Left, 7:Forward-Left, 24:Up
+    // @User: Standard
+    AP_GROUPINFO("_ANLG4_ORIENT", 32, AP_Proximity, state[0].orientation[3], 6),
+#endif
 
 #if PROXIMITY_MAX_INSTANCES > 1
     // @Param: 2_TYPE
@@ -300,6 +400,13 @@ void AP_Proximity::detect_instance(uint8_t instance)
     if (type == Proximity_Type_SITL) {
         state[instance].instance = instance;
         drivers[instance] = new AP_Proximity_SITL(*this, state[instance]);
+        return;
+    }
+#endif
+#if PROXIMITY_MAX_ANALOG > 0
+    if (instance == 0 && type == Proximity_Type_Analog) {
+        state[instance].instance = instance;
+        drivers[instance] = new AP_Proximity_Analog(*this, state[instance]);
         return;
     }
 #endif

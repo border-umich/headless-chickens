@@ -24,6 +24,7 @@
 #define PROXIMITY_MAX_INSTANCES             1   // Maximum number of proximity sensor instances available on this platform
 #define PROXIMITY_YAW_CORRECTION_DEFAULT    22  // default correction for sensor error in yaw
 #define PROXIMITY_MAX_IGNORE                6   // up to six areas can be ignored
+#define PROXIMITY_MAX_ANALOG                4   // Maximum number of analog sensors
 
 class AP_Proximity_Backend;
 
@@ -42,12 +43,20 @@ public:
         Proximity_Type_TRTOWER = 3,
         Proximity_Type_RangeFinder = 4,
         Proximity_Type_SITL    = 10,
+        Proximity_Type_Analog  = 20,
     };
 
     enum Proximity_Status {
         Proximity_NotConnected = 0,
         Proximity_NoData,
         Proximity_Good
+    };
+
+    enum Proximity_Function {
+        FUNCTION_LINEAR    = 0,
+        FUNCTION_INVERTED  = 1,
+        FUNCTION_HYPERBOLA = 2,
+        FUNCTION_POWER = 3
     };
 
     // structure holding distances in 8 directions. used for sending distances to ground station
@@ -111,6 +120,17 @@ public:
     struct Proximity_State {
         uint8_t                 instance;   // the instance number of this proximity sensor
         enum Proximity_Status   status;     // sensor status
+#if PROXIMITY_MAX_ANALOG > 0
+        // parameters for analog sensors
+        AP_Int8 function;
+        AP_Float scaling;
+        AP_Float offset;
+        AP_Float distance_min;
+        AP_Float distance_max;
+        AP_Float cutoff_frequency;
+        AP_Int8 pin[PROXIMITY_MAX_ANALOG];
+        AP_Int8 orientation[PROXIMITY_MAX_ANALOG];
+#endif
     };
 
     //
