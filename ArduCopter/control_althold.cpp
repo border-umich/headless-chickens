@@ -1,14 +1,12 @@
-#include <iostream>
 #include "Copter.h"
 
-using namespace std;
 
 /*
- * Init and run calls for custom flight mode (largely based off of the AltHold flight mode)
+ * Init and run calls for althold, flight mode
  */
 
-// custom_init - initialise custom controller
-bool Copter::custom_init(bool ignore_checks)
+// althold_init - initialise althold controller
+bool Copter::althold_init(bool ignore_checks)
 {
     // initialize vertical speeds and leash lengths
     pos_control->set_speed_z(-g.pilot_velocity_z_max, g.pilot_velocity_z_max);
@@ -26,9 +24,9 @@ bool Copter::custom_init(bool ignore_checks)
     return true;
 }
 
-// custom_run - runs the custom controller
+// althold_run - runs the althold controller
 // should be called at 100hz or more
-void Copter::custom_run()
+void Copter::althold_run()
 {
     AltHoldModeState althold_state;
     float takeoff_climb_rate = 0.0f;
@@ -40,8 +38,12 @@ void Copter::custom_run()
     // apply SIMPLE mode transform to pilot inputs
     update_simple_mode();
 
-    // desired roll, pitch, and yaw_rate
-    float target_roll = 0.0f, target_pitch = 0.0f, target_yaw_rate = 0.0f;
+    // get pilot desired lean angles
+    float target_roll, target_pitch;
+    get_pilot_desired_lean_angles(channel_roll->get_control_in(), channel_pitch->get_control_in(), target_roll, target_pitch, attitude_control->get_althold_lean_angle_max());
+
+    // get pilot's desired yaw rate
+    float target_yaw_rate = get_pilot_desired_yaw_rate(channel_yaw->get_control_in());
 
     // get pilot desired climb rate
     float target_climb_rate = get_pilot_desired_climb_rate(channel_throttle->get_control_in());
@@ -53,7 +55,6 @@ void Copter::custom_run()
 #else
     bool takeoff_triggered = ap.land_complete && (target_climb_rate > 0.0f);
 #endif
-    target_climb_rate = 0.0f;
 
     // Alt Hold State Machine Determination
     if (!motors->armed() || !motors->get_interlock()) {
@@ -144,14 +145,6 @@ void Copter::custom_run()
         break;
 
     case AltHold_Flying:
-        // compute the target climb rate, roll, pitch and yaw rate
-        // land if custom_controller returns false
-        if (!custom_controller(target_climb_rate, target_roll, target_pitch, target_yaw_rate)) {
-            // switch to land mode
-            set_mode(LAND, MODE_REASON_MISSION_END);
-            break;
-        }
-
         motors->set_desired_spool_state(AP_Motors::DESIRED_THROTTLE_UNLIMITED);
 
 #if AC_AVOID_ENABLED == ENABLED
@@ -176,30 +169,4 @@ void Copter::custom_run()
         pos_control->update_z_controller();
         break;
     }
-}
-
-// custom_controller - computes target climb rate, roll, pitch, and yaw rate for custom flight mode
-// returns true to continue flying, and returns false to land
-bool Copter::custom_controller(float &target_climb_rate, float &target_roll, float &target_pitch, float &target_yaw_rate)
-{
-    // get downward facing sensor reading in meters
-    float rangefinder_alt = (float)rangefinder_state.alt_cm / 100.0f;
-
-    // get horizontal sensor readings in meters
-    float dist_forward, dist_right, dist_left;
-    g2.proximity.get_horizontal_distance(0, dist_forward);
-    g2.proximity.get_horizontal_distance(90, dist_right);
-    g2.proximity.get_horizontal_distance(270, dist_left);
-
-    // set desired climb rate in centimeters per second
-    target_climb_rate = 0;
-
-    //set desired roll and pitch in centi-degrees
-    target_roll = 0;
-    target_pitch = 0;
-
-    // set desired yaw rate in centi-degrees per second (set to zero to hold constant heading)
-    target_yaw_rate = 0;
-
-    return false;
 }

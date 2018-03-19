@@ -118,10 +118,6 @@ bool Copter::set_mode(control_mode_t mode, mode_reason_t reason)
             success = guided_nogps_init(ignore_checks);
             break;
 
-        case CUSTOM:
-            success = custom_init(ignore_checks);
-            break;
-
         default:
             success = false;
             break;
@@ -263,10 +259,6 @@ void Copter::update_flight_mode()
             guided_nogps_run();
             break;
 
-        case CUSTOM:
-            custom_run();
-            break;
-
         default:
             break;
     }
@@ -356,7 +348,7 @@ bool Copter::mode_has_manual_throttle(control_mode_t mode)
 //  arming_from_gcs should be set to true if the arming request comes from the ground station
 bool Copter::mode_allows_arming(control_mode_t mode, bool arming_from_gcs)
 {
-    if (mode_has_manual_throttle(mode) || mode == LOITER || mode == ALT_HOLD || mode == POSHOLD || mode == DRIFT || mode == SPORT || mode == THROW || (arming_from_gcs && (mode == GUIDED || mode == GUIDED_NOGPS || mode == CUSTOM))) {
+    if (mode_has_manual_throttle(mode) || mode == LOITER || mode == ALT_HOLD || mode == POSHOLD || mode == DRIFT || mode == SPORT || mode == THROW || (arming_from_gcs && (mode == GUIDED || mode == GUIDED_NOGPS))) {
         return true;
     }
     return false;
@@ -505,9 +497,6 @@ void Copter::print_flight_mode(AP_HAL::BetterStream *port, uint8_t mode)
         break;
     case GUIDED_NOGPS:
         port->printf("GUIDED_NOGPS");
-        break;
-    case CUSTOM:
-        port->printf("CUSTOM");
         break;
     default:
         port->printf("Mode(%u)", (unsigned)mode);
