@@ -31,7 +31,8 @@ AP_Proximity_Analog::AP_Proximity_Analog(AP_Proximity &_frontend, AP_Proximity::
 }
 
 // compute filtered distance (in meters) for a single sensor
-float AP_Proximity_Analog::distance_m(uint8_t instance) {
+float AP_Proximity_Analog::distance_m(uint8_t instance)
+{
     // cope with changed settings
     source[instance]->set_pin(state.pin[instance]);    
     float v = source[instance]->voltage_average();
