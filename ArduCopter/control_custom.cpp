@@ -194,7 +194,7 @@ bool Copter::custom_controller(float &target_climb_rate, float &target_roll, flo
     // set desired climb rate in centimeters per second
     target_climb_rate = 0;
 
-    //set desired roll and pitch in centi-degrees
+    // set desired roll and pitch in centi-degrees
     target_roll = 0;
     target_pitch = 0;
 
