@@ -884,6 +884,36 @@ const AP_Param::Info Copter::var_info[] = {
     // @User: Standard
     GSCALAR(terrain_follow, "TERRAIN_FOLLOW", 0),
 
+    // @Param: CUSTOM_PARAM1
+    // @DisplayName: Custom controller parameter 1
+    // @Description: First parameter for custom controller
+    // @User: Advanced
+    GSCALAR(custom_param1, "CUSTOM_PARAM1", 0.0f),
+
+    // @Param: CUSTOM_PARAM2
+    // @DisplayName: Custom controller parameter 2
+    // @Description: Second parameter for custom controller
+    // @User: Advanced
+    GSCALAR(custom_param2, "CUSTOM_PARAM2", 0.0f),
+
+    // @Param: CUSTOM_PARAM3
+    // @DisplayName: Custom controller parameter 3
+    // @Description: Third parameter for custom controller
+    // @User: Advanced
+    GSCALAR(custom_param3, "CUSTOM_PARAM3", 0.0f),
+
+    // @Param: CUSTOM_PARAM4
+    // @DisplayName: Custom controller parameter 4
+    // @Description: Fourth parameter for custom controller
+    // @User: Advanced
+    GSCALAR(custom_param4, "CUSTOM_PARAM4", 0.0f),
+
+    // @Param: CUSTOM_PARAM5
+    // @DisplayName: Custom controller parameter 5
+    // @Description: Fifth parameter for custom controller
+    // @User: Advanced
+    GSCALAR(custom_param5, "CUSTOM_PARAM5", 0.0f),
+
     // @Group: 
     // @Path: Parameters.cpp
     GOBJECT(g2, "",  ParametersG2),
