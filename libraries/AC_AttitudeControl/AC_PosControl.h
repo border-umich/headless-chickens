@@ -384,6 +384,8 @@ protected:
 
     // parameters
     AP_Float    _accel_xy_filt_hz;      // XY acceleration filter cutoff frequency
+    AP_Float    _throttle_cutoff_freq;  // Z acceleration filter cutoff frequency
+    AP_Float    _vel_error_cutoff_freq; // Z velocity filter cutoff frequency
 
     // internal variables
     float       _dt;                    // time difference (in seconds) between calls from the main program

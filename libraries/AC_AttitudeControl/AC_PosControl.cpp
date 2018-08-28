@@ -16,6 +16,24 @@ const AP_Param::GroupInfo AC_PosControl::var_info[] = {
     // @User: Advanced
     AP_GROUPINFO("_ACC_XY_FILT", 1, AC_PosControl, _accel_xy_filt_hz, POSCONTROL_ACCEL_FILTER_HZ),
 
+    // @Param: _THR_CUTOFF
+    // @DisplayName: Z Acceleration filter cutoff frequency
+    // @Description: Lower values will slow the response of the navigation controller and reduce twitchiness
+    // @Units: Hz
+    // @Range: 0.5 5
+    // @Increment: 0.1
+    // @User: Advanced
+    AP_GROUPINFO("_THR_CUTOFF", 2, AC_PosControl, _throttle_cutoff_freq, POSCONTROL_THROTTLE_CUTOFF_FREQ),
+
+    // @Param: _VEL_CUTOFF
+    // @DisplayName: Z Velocity filter cutoff frequency
+    // @Description: Lower values will slow the response of the navigation controller and reduce twitchiness
+    // @Units: Hz
+    // @Range: 0.5 5
+    // @Increment: 0.1
+    // @User: Advanced
+    AP_GROUPINFO("_VEL_CUTOFF", 3, AC_PosControl, _vel_error_cutoff_freq, POSCONTROL_VEL_ERROR_CUTOFF_FREQ),
+
     AP_GROUPEND
 };
 
@@ -90,7 +108,7 @@ void AC_PosControl::set_dt(float delta_sec)
     _pid_accel_z.set_dt(_dt);
 
     // update rate z-axis velocity error and accel error filters
-    _vel_error_filter.set_cutoff_frequency(POSCONTROL_VEL_ERROR_CUTOFF_FREQ);
+    _vel_error_filter.set_cutoff_frequency(_vel_error_cutoff_freq);
 }
 
 /// set_dt_xy - sets time delta in seconds for horizontal controller (i.e. 50hz = 0.02)
@@ -497,7 +515,7 @@ void AC_PosControl::accel_to_throttle(float accel_target_z)
     float thr_out = (p+i+d)/1000.0f +_motors.get_throttle_hover();
 
     // send throttle to attitude controller with angle boost
-    _attitude_control.set_throttle_out(thr_out, true, POSCONTROL_THROTTLE_CUTOFF_FREQ);
+    _attitude_control.set_throttle_out(thr_out, true, _throttle_cutoff_freq);
 }
 
 ///
