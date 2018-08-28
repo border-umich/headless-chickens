@@ -370,7 +370,8 @@ public:
         //
         // 256: Custom controller parameters
         //
-        k_param_custom_param1 = 256,
+        k_param_rangefinder_cutoff_freq = 256,
+        k_param_custom_param1,
         k_param_custom_param2,
         k_param_custom_param3,
         k_param_custom_param4,
@@ -499,6 +500,8 @@ public:
     AP_Float custom_param3;
     AP_Float custom_param4;
     AP_Float custom_param5;
+
+    AP_Float rangefinder_cutoff_freq;
 
     // Note: keep initializers here in the same order as they are declared
     // above.

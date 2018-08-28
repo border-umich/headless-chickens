@@ -29,6 +29,7 @@ void Copter::init_rangefinder(void)
 #if RANGEFINDER_ENABLED == ENABLED
    rangefinder.init();
    rangefinder_state.alt_cm_filt.set_cutoff_frequency(RANGEFINDER_WPNAV_FILT_HZ);
+   rangefinder_state.alt_cm_filt2.set_cutoff_frequency(g.rangefinder_cutoff_freq);
    rangefinder_state.enabled = rangefinder.has_orientation(ROTATION_PITCH_270);
 #endif
 }
@@ -62,8 +63,10 @@ void Copter::read_rangefinder(void)
         if (now - rangefinder_state.last_healthy_ms > RANGEFINDER_TIMEOUT_MS) {
             // reset filter if we haven't used it within the last second
             rangefinder_state.alt_cm_filt.reset(rangefinder_state.alt_cm);
+            rangefinder_state.alt_cm_filt2.reset(rangefinder_state.alt_cm);
         } else {
             rangefinder_state.alt_cm_filt.apply(rangefinder_state.alt_cm, 0.05f);
+            rangefinder_state.alt_cm_filt2.apply(rangefinder_state.alt_cm, 0.05f);
         }
         rangefinder_state.last_healthy_ms = now;
     }

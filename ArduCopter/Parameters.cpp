@@ -884,6 +884,13 @@ const AP_Param::Info Copter::var_info[] = {
     // @User: Standard
     GSCALAR(terrain_follow, "TERRAIN_FOLLOW", 0),
 
+    // @Param: RNGFND_CUTOFF
+    // @DisplayName: Rangefinder filter cutoff frequency
+    // @Description: Cutoff frequency of the low-pass filter applied to rangefinder readings
+    // @Units: Hz
+    // @User: Advanced
+    GSCALAR(rangefinder_cutoff_freq, "RNGFND_CUTOFF", 0.0f),
+
     // @Param: CUSTOM_PARAM1
     // @DisplayName: Custom controller parameter 1
     // @Description: First parameter for custom controller

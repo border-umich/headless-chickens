@@ -28,6 +28,10 @@
 #include "AP_RangeFinder_uLanding.h"
 #include "AP_RangeFinder_trone.h"
 #include <AP_BoardConfig/AP_BoardConfig.h>
+#include <random>
+
+std::mt19937 generator{std::random_device{}()};
+std::normal_distribution<float> randn(0.0f, 1.0f);
 
 extern const AP_HAL::HAL &hal;
 
@@ -158,6 +162,13 @@ const AP_Param::GroupInfo RangeFinder::var_info[] = {
     // @Values: 0:Forward, 1:Forward-Right, 2:Right, 3:Back-Right, 4:Back, 5:Back-Left, 6:Left, 7:Forward-Left, 24:Up, 25:Down
     // @User: Advanced
     AP_GROUPINFO("_ORIENT", 53, RangeFinder, _orientation[0], ROTATION_PITCH_270),
+
+    // @Param: _NOISE_STD
+    // @DisplayName: Rangefinder noise standard deviation
+    // @Description: Standard deviation of Gaussian noise added to rangefinder readings
+    // @Units: cm
+    // @User: Advanced
+    AP_GROUPINFO("_NOISE_STD", 56, RangeFinder, _noise_std, 0.0f),
 
 #if RANGEFINDER_MAX_INSTANCES > 1
     // @Param: 2_TYPE
@@ -576,6 +587,7 @@ void RangeFinder::init(void)
  */
 void RangeFinder::update(void)
 {
+    float noise;
     for (uint8_t i=0; i<num_instances; i++) {
         if (drivers[i] != nullptr) {
             if (_type[i] == RangeFinder_TYPE_NONE) {
@@ -584,7 +596,12 @@ void RangeFinder::update(void)
                 state[i].range_valid_count = 0;
                 continue;
             }
+            noise = randn(generator);
+            while (noise < -2 || noise > 2) {
+                noise = randn(generator);
+            }
             drivers[i]->update();
+            state[i].distance_cm += _noise_std * noise;
             update_pre_arm_check(i);
         }
     }
