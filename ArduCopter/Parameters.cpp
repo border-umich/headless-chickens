@@ -891,6 +891,60 @@ const AP_Param::Info Copter::var_info[] = {
     // @User: Advanced
     GSCALAR(rangefinder_cutoff_freq, "RNGFND_CUTOFF", 0.0f),
 
+    // @Param: ROLL_P
+    // @DisplayName: Roll controller P gain
+    // @Description: Roll controller P gain.
+    // @User: Standard
+
+    // @Param: ROLL_I
+    // @DisplayName: Roll controller I gain
+    // @Description: Roll controller I gain
+    // @User: Standard
+
+    // @Param: ROLL_IMAX
+    // @DisplayName: Roll controller I gain maximum
+    // @Description: Roll controller I gain maximum
+    // @User: Standard
+
+    // @Param: ROLL_D
+    // @DisplayName: Roll controller D gain
+    // @Description: Roll controller D gain
+    // @User: Standard
+
+    // @Param: ROLL_FILT
+    // @DisplayName: Roll controller filter
+    // @Description: Filter applied to roll controller
+    // @Units: Hz
+    // @User: Standard
+    GGROUP(pid_roll, "ROLL_", AC_PID),
+
+    // @Param: PITCH_P
+    // @DisplayName: Pitch controller P gain
+    // @Description: Pitch controller P gain.
+    // @User: Standard
+
+    // @Param: PITCH_I
+    // @DisplayName: Pitch controller I gain
+    // @Description: Pitch controller I gain
+    // @User: Standard
+
+    // @Param: PITCH_IMAX
+    // @DisplayName: Pitch controller I gain maximum
+    // @Description: Pitch controller I gain maximum
+    // @User: Standard
+
+    // @Param: PITCH_D
+    // @DisplayName: Pitch controller D gain
+    // @Description: Pitch controller D gain
+    // @User: Standard
+
+    // @Param: PITCH_FILT
+    // @DisplayName: Pitch controller filter
+    // @Description: Filter applied to pitch controller
+    // @Units: Hz
+    // @User: Standard
+    GGROUP(pid_pitch, "PITCH_", AC_PID),
+
     // @Param: CUSTOM_PARAM1
     // @DisplayName: Custom controller parameter 1
     // @Description: First parameter for custom controller

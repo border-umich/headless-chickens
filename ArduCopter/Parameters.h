@@ -371,6 +371,8 @@ public:
         // 256: Custom controller parameters
         //
         k_param_rangefinder_cutoff_freq = 256,
+        k_param_pid_roll,
+        k_param_pid_pitch,
         k_param_custom_param1,
         k_param_custom_param2,
         k_param_custom_param3,
@@ -495,6 +497,8 @@ public:
     AP_Float                autotune_min_d;
 
     // Custom controller parameters
+    AC_PID pid_roll;
+    AC_PID pid_pitch;
     AP_Float custom_param1;
     AP_Float custom_param2;
     AP_Float custom_param3;
@@ -512,6 +516,8 @@ public:
 
         p_vel_z                 (VEL_Z_P),
         pid_accel_z             (ACCEL_Z_P,       ACCEL_Z_I,        ACCEL_Z_D,      ACCEL_Z_IMAX,       ACCEL_Z_FILT_HZ,    MAIN_LOOP_SECONDS),
+        pid_roll                (LEAN_ANGLE_P,    LEAN_ANGLE_I,     LEAN_ANGLE_D,   LEAN_ANGLE_IMAX,    LEAN_ANGLE_FILT_HZ, MAIN_LOOP_SECONDS),
+        pid_pitch               (LEAN_ANGLE_P,    LEAN_ANGLE_I,     LEAN_ANGLE_D,   LEAN_ANGLE_IMAX,    LEAN_ANGLE_FILT_HZ, MAIN_LOOP_SECONDS),
 
         // P controller	        initial P
         //----------------------------------------------------------------------

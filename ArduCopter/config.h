@@ -651,3 +651,24 @@
 #ifndef ADVANCED_FAILSAFE
 # define ADVANCED_FAILSAFE DISABLED
 #endif
+
+//////////////////////////////////////////////////////////////////////////////
+// ENGR100-400/410
+//
+
+// gains for lean angle controllers
+#ifndef LEAN_ANGLE_P
+ #define LEAN_ANGLE_P 0.0f
+#endif
+#ifndef LEAN_ANGLE_I
+ #define LEAN_ANGLE_I 0.0f
+#endif
+#ifndef LEAN_ANGLE_D
+ #define LEAN_ANGLE_D 0.0f
+#endif
+#ifndef LEAN_ANGLE_IMAX
+ #define LEAN_ANGLE_IMAX 0.0f
+#endif
+#ifndef LEAN_ANGLE_FILT_HZ
+ #define LEAN_ANGLE_FILT_HZ 20.0f
+#endif

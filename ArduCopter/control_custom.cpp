@@ -23,6 +23,10 @@ bool Copter::custom_init(bool ignore_checks)
     // stop takeoff if running
     takeoff_stop();
 
+    // reset integrators for roll and pitch controllers
+    g.pid_roll.reset_I();
+    g.pid_pitch.reset_I();
+
     return true;
 }
 
@@ -186,20 +190,21 @@ bool Copter::custom_controller(float &target_climb_rate, float &target_roll, flo
     float rangefinder_alt = (float)rangefinder_state.alt_cm / 100.0f;
 
     // get horizontal sensor readings in meters
-    float dist_forward, dist_right, dist_left;
+    float dist_forward, dist_right, dist_backward, dist_left;
     g2.proximity.get_horizontal_distance(0, dist_forward);
     g2.proximity.get_horizontal_distance(90, dist_right);
+    g2.proximity.get_horizontal_distance(180, dist_backward);
     g2.proximity.get_horizontal_distance(270, dist_left);
 
     // set desired climb rate in centimeters per second
-    target_climb_rate = 0;
+    target_climb_rate = 0.0f;
 
     // set desired roll and pitch in centi-degrees
-    target_roll = 0;
-    target_pitch = 0;
+    target_pitch = 0.0f;
+    target_roll = 0.0f;
 
     // set desired yaw rate in centi-degrees per second (set to zero to hold constant heading)
-    target_yaw_rate = 0;
+    target_yaw_rate = 0.0f;
 
     return false;
 }
