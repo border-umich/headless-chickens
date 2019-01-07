@@ -300,9 +300,9 @@ bool AP_Arming_Copter::parameter_checks(bool display_failure)
         }
 
         // check for something close to vehicle
-        if (!pre_arm_proximity_check(display_failure)) {
-            return false;
-        }
+        // if (!pre_arm_proximity_check(display_failure)) {
+        //     return false;
+        // }
     }
 
     return true;
