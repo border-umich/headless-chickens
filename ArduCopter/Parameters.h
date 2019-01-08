@@ -368,16 +368,16 @@ public:
         // 254,255: reserved
 
         //
-        // 256: Custom controller parameters
+        // 256: Parameters for ENGR100-Drone
         //
         k_param_rangefinder_cutoff_freq = 256,
         k_param_pid_roll,
         k_param_pid_pitch,
-        k_param_custom_param1,
-        k_param_custom_param2,
-        k_param_custom_param3,
-        k_param_custom_param4,
-        k_param_custom_param5,
+        k_param_e100_param1,
+        k_param_e100_param2,
+        k_param_e100_param3,
+        k_param_e100_param4,
+        k_param_e100_param5,
 
         // the k_param_* space is 9-bits in size
         // 511: reserved
@@ -496,14 +496,14 @@ public:
     AP_Float                autotune_aggressiveness;
     AP_Float                autotune_min_d;
 
-    // Custom controller parameters
+    // Parameters for ENGR100-Drone
     AC_PID pid_roll;
     AC_PID pid_pitch;
-    AP_Float custom_param1;
-    AP_Float custom_param2;
-    AP_Float custom_param3;
-    AP_Float custom_param4;
-    AP_Float custom_param5;
+    AP_Float e100_param1;
+    AP_Float e100_param2;
+    AP_Float e100_param3;
+    AP_Float e100_param4;
+    AP_Float e100_param5;
 
     AP_Float rangefinder_cutoff_freq;
 

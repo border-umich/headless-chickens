@@ -946,10 +946,10 @@ private:
     void avoid_adsb_run();
     bool avoid_adsb_set_velocity(const Vector3f& velocity_neu);
 
-    // custom flight mode for ENGR100-400/410
-    bool custom_init(bool ignore_checks);
-    void custom_run();
-    bool custom_controller(float &target_climb_rate, float &target_roll, float &target_pitch, float &target_yaw_rate);
+    // autonomous flight mode for ENGR100-Drone
+    bool autonomous_init(bool ignore_checks);
+    void autonomous_run();
+    bool autonomous_controller(float &target_climb_rate, float &target_roll, float &target_pitch, float &target_yaw_rate);
 
     void ekf_check();
     bool ekf_over_threshold();

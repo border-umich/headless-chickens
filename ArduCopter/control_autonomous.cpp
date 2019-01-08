@@ -4,11 +4,11 @@
 using namespace std;
 
 /*
- * Init and run calls for custom flight mode (largely based off of the AltHold flight mode)
+ * Init and run calls for autonomous flight mode (largely based off of the AltHold flight mode)
  */
 
-// custom_init - initialise custom controller
-bool Copter::custom_init(bool ignore_checks)
+// autonomous_init - initialise autonomous controller
+bool Copter::autonomous_init(bool ignore_checks)
 {
     // initialize vertical speeds and leash lengths
     pos_control->set_speed_z(-g.pilot_velocity_z_max, g.pilot_velocity_z_max);
@@ -30,9 +30,9 @@ bool Copter::custom_init(bool ignore_checks)
     return true;
 }
 
-// custom_run - runs the custom controller
+// autonomous_run - runs the autonomous controller
 // should be called at 100hz or more
-void Copter::custom_run()
+void Copter::autonomous_run()
 {
     AltHoldModeState althold_state;
     float takeoff_climb_rate = 0.0f;
@@ -149,8 +149,8 @@ void Copter::custom_run()
 
     case AltHold_Flying:
         // compute the target climb rate, roll, pitch and yaw rate
-        // land if custom_controller returns false
-        if (!custom_controller(target_climb_rate, target_roll, target_pitch, target_yaw_rate)) {
+        // land if autonomous_controller returns false
+        if (!autonomous_controller(target_climb_rate, target_roll, target_pitch, target_yaw_rate)) {
             // switch to land mode
             set_mode(LAND, MODE_REASON_MISSION_END);
             break;
@@ -182,9 +182,9 @@ void Copter::custom_run()
     }
 }
 
-// custom_controller - computes target climb rate, roll, pitch, and yaw rate for custom flight mode
+// autonomous_controller - computes target climb rate, roll, pitch, and yaw rate for autonomous flight mode
 // returns true to continue flying, and returns false to land
-bool Copter::custom_controller(float &target_climb_rate, float &target_roll, float &target_pitch, float &target_yaw_rate)
+bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll, float &target_pitch, float &target_yaw_rate)
 {
     // get downward facing sensor reading in meters
     float rangefinder_alt = (float)rangefinder_state.alt_cm / 100.0f;
