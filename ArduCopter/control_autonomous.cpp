@@ -206,5 +206,5 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     // set desired yaw rate in centi-degrees per second (set to zero to hold constant heading)
     target_yaw_rate = 0.0f;
 
-    return false;
+    return true;
 }
