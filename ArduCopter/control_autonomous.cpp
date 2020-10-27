@@ -206,11 +206,29 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
 	//determine state
 	int state=0;
-	bool at_start=0;
+	bool at_start=1;
+	float target_dist=2.5;
 	switch(state){
+	case -1:
+		//land
+		break;
 	//forward
 	case 0:
-		
+		if(dist_forward<target_dist&&dist_backward<target_dist){
+			if(dist_left<target_dist&&dist_right<target_dist) state=-1;
+			else if(dist_left<target_dist) state=2;
+			else if(dist_right<target_dist) state=3;
+			else state=2;
+		}
+		if(dist_forward>target_dist){
+			if(dist_left<target_dist&&dist_right<target_dist) state=-1;
+			if(dist_left<target_dist){
+
+			}
+			if(dist_right<target_dist){
+
+			}
+		}
 		break;
 	//go left
 	case 1:
@@ -245,4 +263,8 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     target_yaw_rate = 0.0f;
 
     return true;
+}
+
+bool Copter::follow_wall(bool direction, float to_wall, float to_dest, float &target_role, float &target_pitch){
+
 }
