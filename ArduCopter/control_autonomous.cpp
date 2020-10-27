@@ -242,7 +242,9 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     g.e100_param1 = target_dist-.5;
     g.pid_pitch.set_input_filter_all(g.e100_param1-dist_forward);
     target_pitch=100.0f*g.pid_pitch.get_pid();
+    
     target_roll = 500.f;
+    
 		break;
 	}
 
