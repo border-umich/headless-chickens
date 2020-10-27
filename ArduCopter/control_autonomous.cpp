@@ -207,6 +207,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 	//determine state
 	int state=0;
 	bool at_start=0;
+    float target_dist=2.5;
 	switch(state){
 	//forward
 	case 0:
@@ -214,11 +215,17 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 		break;
 	//go left
 	case 1:
-
+    g.e100_param1 = target_dist-.5;
+    g.pid_pitch.set_input_filter_all(g.e100_param1-dist_forward);
+    target_pitch=100.0f*g.pid_pitch.get_pid();
+    target_roll = -500.0f;
 		break;
 	//go right
 	case 2:
-
+    g.e100_param1 = target_dist-.5;
+    g.pid_pitch.set_input_filter_all(g.e100_param1-dist_forward);
+    target_pitch=100.0f*g.pid_pitch.get_pid();
+    target_roll = 500.f;
 		break;
 	}
 
@@ -228,7 +235,8 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
     // set desired roll and pitch in centi-degrees
     //target_pitch=0.0f;
-    g.pid_pitch.set_input_filter_all(10*(.5f)-dist_forward);
+    g.e100_param1 = 10*(.5f);
+    g.pid_pitch.set_input_filter_all(g.e100_param1-dist_forward);
     target_pitch=100.0f*g.pid_pitch.get_pid();
 
 
