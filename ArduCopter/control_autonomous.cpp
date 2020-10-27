@@ -205,9 +205,11 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     }
 
 	//determine state
-	int state=0;
+	static int state=0;
 	bool at_start=1;
 	float target_dist=2.5;
+	float max_angle=300;
+
 	switch(state){
 	case -1:
 		//land
@@ -221,13 +223,20 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 			else state=2;
 		}
 		if(dist_forward>target_dist){
-			if(dist_left<target_dist&&dist_right<target_dist) state=-1;
-			if(dist_left<target_dist){
+			g.pid_pitch.set_input_filter_all(target_dist-dist_forward);
+    		target_pitch=100.0f*g.pid_pitch.get_pid();
 
+			if(dist_left<target_dist&&dist_right<target_dist){
+				g.pid_roll.set_input_filter_all(dist_right-dist_left);
+			}
+			if(dist_left<target_dist){
+				g.pid_roll.set_input_filter_all(target_dist-dist_left);
 			}
 			if(dist_right<target_dist){
-
+				g.pid_roll.set_input_filter_all(dist_left-dist_right);
 			}
+			else g.pid_roll.set_input_filter_all(0);
+			target_roll=100.0f*g.pid_roll.get_pid();
 		}
 		break;
 	//go left
@@ -239,7 +248,13 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
 		break;
 	}
+	//cap pitch
+	if(target_pitch>max_angle)target_pitch=max_angle;
+    if(target_pitch<-max_angle)target_pitch=-max_angle;
 
+    //cap roll
+	if(target_roll>max_angle)target_roll=max_angle;
+    if(target_roll<-max_angle)target_roll=-max_angle;
 
     // set desired climb rate in centimeters per second
     target_climb_rate = 0.0f;
@@ -263,8 +278,4 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     target_yaw_rate = 0.0f;
 
     return true;
-}
-
-bool Copter::follow_wall(bool direction, float to_wall, float to_dest, float &target_role, float &target_pitch){
-
 }

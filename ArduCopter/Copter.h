@@ -1155,8 +1155,6 @@ private:
     void dataflash_periodic(void);
     void accel_cal_update(void);
 
-    bool follow_wall(bool direction, float to_wall, float to_dest, float &target_role, float &target_pitch){
-
 
 public:
     void mavlink_delay_cb();
