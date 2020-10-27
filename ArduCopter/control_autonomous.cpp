@@ -196,12 +196,32 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     g2.proximity.get_horizontal_distance(180, dist_backward);
     g2.proximity.get_horizontal_distance(270, dist_left);
 
+
     //run copter
     static int counter=0;
     if(counter++ > 400){
     	gcs_send_text(MAV_SEVERITY_INFO, "Autonomous flight mode for Headless Chickens");
     	counter=0;
     }
+
+	//determine state
+	int state=0;
+	bool at_start=0;
+	switch(state){
+	//forward
+	case 0:
+		
+		break;
+	//go left
+	case 1:
+
+		break;
+	//go right
+	case 2:
+
+		break;
+	}
+
 
     // set desired climb rate in centimeters per second
     target_climb_rate = 0.0f;
@@ -215,7 +235,7 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     //target_roll = 0.0f;
     float o_dr=dist_right<10?dist_right:10;
     float o_dl=dist_left<10?dist_left:10;
-    g.pid_roll.set_input_filter_all(10*(abs(o_dr-o_dl)<1?0:o_dr-o_dl));
+    g.pid_roll.set_input_filter_all(abs(o_dr-o_dl)<1?0:o_dr-o_dl);
     float o_roll=100.0f*g.pid_roll.get_pid();
     if(o_roll>500)o_roll=500;
     if(o_roll<-500)o_roll=-500;
