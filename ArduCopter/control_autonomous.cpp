@@ -241,9 +241,13 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 		break;
 	//go left
 	case 1:
+
     if(dist_left>target_dist){
         g.pid_roll.set_input_filter_all(target_dist-dist_left);
-    		target_roll=100.0f*g.pid_roll.get_pid();
+    		target_roll= -100.0f*g.pid_roll.get_pid();
+    }else if(dist_left<=target_dist){
+        target_roll = 0;
+        state = 0;
     }
     /*
     g.e100_param1 = target_dist-.5;
@@ -253,12 +257,13 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 		break;
 	//go right
 	case 2:
-    g.e100_param1 = target_dist-.5;
-    g.pid_pitch.set_input_filter_all(g.e100_param1-dist_forward);
-    target_pitch=100.0f*g.pid_pitch.get_pid();
-    
-    target_roll = 500.f;
-    
+    if(dist_left>target_dist){
+        g.pid_roll.set_input_filter_all(target_dist-dist_left);
+    		target_roll= 100.0f*g.pid_roll.get_pid();
+    }else if(dist_left<=target_dist){
+        target_roll = 0;
+        state = 0;
+    }
 		break;
 	}
 	//cap pitch
