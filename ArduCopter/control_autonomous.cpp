@@ -218,9 +218,9 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 	case 0:
 		if(dist_forward<target_dist&&dist_backward<target_dist){
 			if(dist_left<target_dist&&dist_right<target_dist) state=-1;
-			else if(dist_left<target_dist) state=2;
-			else if(dist_right<target_dist) state=3;
-			else state=2;
+			else if(dist_left>target_dist) state=1;
+			else if(dist_right>target_dist) state=2;
+			else state=-1;
 		}
 		if(dist_forward>target_dist){
 			g.pid_pitch.set_input_filter_all(target_dist-dist_forward);
@@ -241,10 +241,15 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 		break;
 	//go left
 	case 1:
+    if(dist_left>target_dist){
+        g.pid_roll.set_input_filter_all(target_dist-dist_left);
+    		target_roll=100.0f*g.pid_roll.get_pid();
+    }
+    /*
     g.e100_param1 = target_dist-.5;
     g.pid_pitch.set_input_filter_all(g.e100_param1-dist_forward);
     target_pitch=100.0f*g.pid_pitch.get_pid();
-    target_roll = -500.0f;
+    target_roll = -500.0f;*/
 		break;
 	//go right
 	case 2:
