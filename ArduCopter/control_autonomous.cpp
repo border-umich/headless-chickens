@@ -200,69 +200,82 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
     //run copter
     static int counter=0;
     if(counter++ > 400){
-    	gcs_send_text(MAV_SEVERITY_INFO, "Autonomous flight mode for Headless Chickens");
+    	gcs_send_text_fmt(MAV_SEVERITY_INFO, "F: %fB: %fL: %fR: %f", dist_forward, dist_backward, dist_left, dist_right);
     	counter=0;
     }
 
 	//determine state
 	static int state=0;
-	bool at_start=1;
-	float target_dist=2.5;
+	float target_dist=4.5;
 	float max_angle=300;
 
 	switch(state){
 	case -1:
-		//land
+		return false;
 		break;
 	//forward
 	case 0:
-		if(dist_forward<target_dist&&dist_backward<target_dist){
-			if(dist_left<target_dist&&dist_right<target_dist) state=-1;
-			else if(dist_left>target_dist) state=1;
-			else if(dist_right>target_dist) state=2;
-			else state=-1;
+	if(dist_forward<target_dist&&dist_backward<target_dist&&dist_left<target_dist){
+		gcs_send_text(MAV_SEVERITY_INFO, "Finished");
+		state=-1;
+	}
+	if(dist_forward<target_dist){
+		if(dist_left<target_dist&&dist_right<target_dist){
+			gcs_send_text(MAV_SEVERITY_INFO, "Landing");
+			state=-1;
 		}
-		if(dist_forward>target_dist){
-			g.pid_pitch.set_input_filter_all(target_dist-dist_forward);
-    		target_pitch=100.0f*g.pid_pitch.get_pid();
+		else if(dist_right<target_dist){
+			gcs_send_text(MAV_SEVERITY_INFO, "Going Left");
+			state=1;
+		}
+		else if(dist_left<target_dist){
+			gcs_send_text(MAV_SEVERITY_INFO, "Going Right");
+			state=2;
+		}
+		else {
+			gcs_send_text(MAV_SEVERITY_INFO, "Defaulting Left");
+			state=1;
+		}
+	}
+	if(dist_forward>target_dist){
+		g.pid_pitch.set_input_filter_all(target_dist-dist_forward);
+		target_pitch=100.0f*g.pid_pitch.get_pid();
 
-			if(dist_left<target_dist&&dist_right<target_dist){
-				g.pid_roll.set_input_filter_all(dist_right-dist_left);
-			}
-			if(dist_left<target_dist){
-				g.pid_roll.set_input_filter_all(target_dist-dist_left);
-			}
-			if(dist_right<target_dist){
-				g.pid_roll.set_input_filter_all(dist_left-dist_right);
-			}
-			else g.pid_roll.set_input_filter_all(0);
-			target_roll=100.0f*g.pid_roll.get_pid();
+		if(dist_left<target_dist&&dist_right<target_dist){
+			g.pid_roll.set_input_filter_all(dist_right-dist_left);
 		}
-		break;
+		if(dist_left<target_dist){
+			g.pid_roll.set_input_filter_all(target_dist-dist_left);
+		}
+		if(dist_right<target_dist){
+			g.pid_roll.set_input_filter_all(dist_right-target_dist);
+		}
+		else g.pid_roll.set_input_filter_all(0);
+		target_roll=100.0f*g.pid_roll.get_pid();
+	}
+	break;
 	//go left
 	case 1:
-
-    if(dist_left>target_dist){
-        g.pid_roll.set_input_filter_all(target_dist-dist_left);
-    		target_roll= -100.0f*g.pid_roll.get_pid();
-    }else if(dist_left<=target_dist){
-        target_roll = 0;
-        state = 0;
+    g.pid_pitch.set_input_filter_all(target_dist-dist_forward);
+    g.pid_pitch.get_pid();
+    g.pid_roll.set_input_filter_all(target_dist-dist_left);
+    target_roll = 100.0f*g.pid_roll.get_pid();
+    if(dist_left<target_dist){
+    	gcs_send_text(MAV_SEVERITY_INFO, "Going Forward");
+    	target_roll=0;
+    	state=0;
     }
-    /*
-    g.e100_param1 = target_dist-.5;
-    g.pid_pitch.set_input_filter_all(g.e100_param1-dist_forward);
-    target_pitch=100.0f*g.pid_pitch.get_pid();
-    target_roll = -500.0f;*/
 		break;
 	//go right
 	case 2:
-    if(dist_left>target_dist){
-        g.pid_roll.set_input_filter_all(target_dist-dist_left);
-    		target_roll= 100.0f*g.pid_roll.get_pid();
-    }else if(dist_left<=target_dist){
-        target_roll = 0;
-        state = 0;
+    g.pid_pitch.set_input_filter_all(target_dist-dist_forward);
+    g.pid_pitch.get_pid();
+    g.pid_roll.set_input_filter_all(dist_right-target_dist);
+    target_roll = 100.0f*g.pid_roll.get_pid();
+    if(dist_left<target_dist){
+    	gcs_send_text(MAV_SEVERITY_INFO, "Going Forward");
+    	target_roll=0;
+    	state=0;
     }
 		break;
 	}
@@ -276,22 +289,6 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
     // set desired climb rate in centimeters per second
     target_climb_rate = 0.0f;
-
-    // set desired roll and pitch in centi-degrees
-    //target_pitch=0.0f;
-    g.e100_param1 = 10*(.5f);
-    g.pid_pitch.set_input_filter_all(g.e100_param1-dist_forward);
-    target_pitch=100.0f*g.pid_pitch.get_pid();
-
-
-    //target_roll = 0.0f;
-    float o_dr=dist_right<10?dist_right:10;
-    float o_dl=dist_left<10?dist_left:10;
-    g.pid_roll.set_input_filter_all(abs(o_dr-o_dl)<1?0:o_dr-o_dl);
-    float o_roll=100.0f*g.pid_roll.get_pid();
-    if(o_roll>500)o_roll=500;
-    if(o_roll<-500)o_roll=-500;
-    target_roll=o_roll;
 
     // set desired yaw rate in centi-degrees per second (set to zero to hold constant heading)
     target_yaw_rate = 0.0f;
