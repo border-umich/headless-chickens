@@ -182,6 +182,8 @@ void Copter::autonomous_run()
     }
 }
 
+
+
 // autonomous_controller - computes target climb rate, roll, pitch, and yaw rate for autonomous flight mode
 // returns true to continue flying, and returns false to land
 bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll, float &target_pitch, float &target_yaw_rate)
@@ -290,8 +292,6 @@ bool Copter::autonomous_controller(float &target_climb_rate, float &target_roll,
 
     // set desired yaw rate in centi-degrees per second (set to zero to hold constant heading)
     target_yaw_rate = 0.0f;
-
-    target_pitch=0;
 
     return true;
 }
